@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    inquiry_score();
+                    login_action();
+                    String str = inquiry_score_raw_resource(false);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -78,12 +80,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void inquiry_score() throws IOException {
-        login_action();
+    private String inquiry_score_raw_resource(final boolean next_page) throws IOException {
         URL post_score_url;
         HttpURLConnection post_score_url_connection;
+        int current_page = 1, total_page = 1;
+        String response_content = "";
 
-        post_score_url = new URL(BASIC_URL + "/xsxk/studiedAction.do");
+        if (!next_page)
+            post_score_url = new URL(BASIC_URL + "/xsxk/studiedAction.do");
+        else
+            post_score_url = new URL(BASIC_URL + "/xsxk/studiedAction.do?page=next");
         post_score_url_connection = (HttpURLConnection) post_score_url.openConnection();
         post_score_url_connection.setDoInput(true);
         post_score_url_connection.setDoOutput(true);
@@ -92,17 +98,45 @@ public class MainActivity extends AppCompatActivity {
         post_score_url_connection.connect();
 
         System.out.println("Response Status : " + post_score_url_connection.getResponseCode());
+        if(post_score_url_connection.getResponseCode() != 200) {
+            return "";
+        }
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(post_score_url_connection.getInputStream()));
         String line;
-        String response_content = "";
-        while ((line = in.readLine()) != null)
-            response_content += line;
+        boolean Input_Switch = false;
+        while ((line = in.readLine()) != null) {
+            if (line.contains("<tr bgcolor=\"#FFFFFF\">"))
+                Input_Switch = true;
+            if(Input_Switch)
+                response_content += line + "\n";
+            if(line.contains("</table>"))
+                Input_Switch = false;
+
+            if (line.contains("<td width=\"16%\" align=\"center\" valign=\"middle\" bgcolor=\"#3366CC\" class=\"NavText style1\">")) {
+                System.out.println("This Line : " + line);
+
+                //The Influence of +1 & +2 is UNKNOWN
+                //But It Works...
+                total_page = line.charAt(
+                        "    <td width=\"16%\" align=\"center\" valign=\"middle\" bgcolor=\"#3366CC\" class=\"NavText style1\">共 ".length() + 1) - '0';
+                current_page =
+                        line.charAt(
+                        "    <td width=\"16%\" align=\"center\" valign=\"middle\" bgcolor=\"#3366CC\" class=\"NavText style1\">共 x 页,第 ".length() + 2) - '0';
+                System.out.println("Current Page : " + current_page);
+                System.out.println("Total Page : " + total_page);
+                break;
+            }
+        }
+
+        if(current_page < total_page)
+            response_content += inquiry_score_raw_resource(true);
+        return response_content;
     }
 
     private String get_request_params() {
         String req_param = "";
-        EditText editText = null;
+        EditText editText;
 
         //Set Request Parameters
         //User Code
@@ -149,7 +183,13 @@ public class MainActivity extends AppCompatActivity {
         String line;
         while ((line = in.readLine()) != null)
             if (line.contains("<LI>")) {
-
+                final String temp = new String(line.getBytes());
+                this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), temp.substring(5), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
     }
 
@@ -157,10 +197,15 @@ public class MainActivity extends AppCompatActivity {
         Thread thread_for_httpConnection = new Thread(new Runnable() {
             @Override
             public void run() {
-                Bitmap bitmap = build_init_connection();
-                ImageView imageView = (ImageView) findViewById(R.id.valid_code_image);
-                imageView.setImageBitmap(bitmap);
-                System.out.println("refresh_img");
+                final Bitmap bitmap = build_init_connection();
+                final ImageView imageView = (ImageView) findViewById(R.id.valid_code_image);
+                imageView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImageBitmap(bitmap);
+                    }
+                });
+                System.out.println("Refresh Image");
             }
         });
         thread_for_httpConnection.start();
@@ -172,6 +217,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static final String BASIC_URL = "http://222.30.32.10";
-    private static final String NEXT_PAGE = "page=next";
     private String JsessionID;
 }

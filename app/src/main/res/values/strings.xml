@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Score</string>
+    <string name="user_name">用户名</string>
+    <string name="user_password">密码</string>
+    <string name="valid_code">验证码</string>
+    <string name="login_button">登录</string>
+    <string name="refresh_button">刷新</string>
+</resources>

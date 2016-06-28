@@ -80,7 +80,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    login_action();
+                    if(!login_action()) {
+                        refresh_img(null);
+                        return;
+                    }
                     String str = inquiry_score_raw_resource(false);
                     Message message = new Message();
                     message.setTarget(handler);
@@ -108,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
         if (!next_page)
             post_score_url = new URL(BASIC_URL + "/xsxk/studiedAction.do");
         else
-            post_score_url = new URL(BASIC_URL + "/xsxk/studiedAction.do?page=next");
+            post_score_url = new URL(BASIC_URL + "/xsxk/studiedPageAction.do?page=next");
+        System.out.println(post_score_url.getQuery());
         post_score_url_connection = (HttpURLConnection) post_score_url.openConnection();
         post_score_url_connection.setDoInput(true);
         post_score_url_connection.setDoOutput(true);
@@ -121,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             return "";
         }
         BufferedReader in = new BufferedReader(
-                new InputStreamReader(post_score_url_connection.getInputStream()));
+                new InputStreamReader(post_score_url_connection.getInputStream(), "GBK"));
         String line;
         boolean Input_Switch = false;
         while ((line = in.readLine()) != null) {
@@ -135,13 +139,11 @@ public class MainActivity extends AppCompatActivity {
             if (line.contains("<td width=\"16%\" align=\"center\" valign=\"middle\" bgcolor=\"#3366CC\" class=\"NavText style1\">")) {
                 System.out.println("This Line : " + line);
 
-                //The Influence of +1 & +2 is UNKNOWN
-                //But It Works...
                 total_page = line.charAt(
-                        "    <td width=\"16%\" align=\"center\" valign=\"middle\" bgcolor=\"#3366CC\" class=\"NavText style1\">共 ".length() + 1) - '0';
+                        "    <td width=\"16%\" align=\"center\" valign=\"middle\" bgcolor=\"#3366CC\" class=\"NavText style1\">共 ".length()) - '0';
                 current_page =
                         line.charAt(
-                        "    <td width=\"16%\" align=\"center\" valign=\"middle\" bgcolor=\"#3366CC\" class=\"NavText style1\">共 x 页,第 ".length() + 2) - '0';
+                        "    <td width=\"16%\" align=\"center\" valign=\"middle\" bgcolor=\"#3366CC\" class=\"NavText style1\">共 x 页,第 ".length()) - '0';
                 System.out.println("Current Page : " + current_page);
                 System.out.println("Total Page : " + total_page);
                 break;
@@ -180,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         return req_param;
     }
 
-    private void login_action() throws IOException {
+    private boolean login_action() throws IOException {
         URL post_url;
         HttpURLConnection post_url_connection;
 
@@ -198,18 +200,21 @@ public class MainActivity extends AppCompatActivity {
 
         System.out.println("Response Status : " + post_url_connection.getResponseCode());
         BufferedReader in = new BufferedReader(
-                new InputStreamReader(post_url_connection.getInputStream()));
+                new InputStreamReader(post_url_connection.getInputStream(), "GBK"));
         String line;
+        boolean isLogin = true;
         while ((line = in.readLine()) != null)
             if (line.contains("<LI>")) {
+                isLogin = false;
                 final String temp = new String(line.getBytes());
                 this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), temp.substring(5), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), temp.substring("<LI>".length()), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
+        return isLogin;
     }
 
     public void refresh_img(View view) {

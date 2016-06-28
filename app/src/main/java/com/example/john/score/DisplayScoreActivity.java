@@ -40,7 +40,7 @@ public class DisplayScoreActivity extends AppCompatActivity {
         return result;
     }
     private ArrayList<String> parse_single_data(String single_raw_data) {
-        System.out.println("Parse Single Data : " + single_raw_data);
+        System.out.println("Parse Single Data");
         ArrayList<String> result = new ArrayList<>(4);
         int begin_index = 0, end_index = 0;
         int count = 0;
@@ -52,12 +52,11 @@ public class DisplayScoreActivity extends AppCompatActivity {
             System.out.println(single_raw_data.substring(begin_index, end_index));
             if(count++ < SKIP_ITEM_COUNT)
                 continue;
-            else if ((count - SKIP_ITEM_COUNT) < DISPLAY_ITEM_COUNT + 1)
+            else if ((count - SKIP_ITEM_COUNT) <= DISPLAY_ITEM_COUNT)
                 result.add(single_raw_data.substring(begin_index, end_index));
             else
                 break;
         }
-        System.out.println("Size : " + result.size());
         return result;
     }
 

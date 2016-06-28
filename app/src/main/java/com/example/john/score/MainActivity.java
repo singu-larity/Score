@@ -1,7 +1,11 @@
 package com.example.john.score;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -61,12 +65,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void inquiry_score(View view) {
+        final Handler handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message message) {
+                super.handleMessage(message);
+                String raw_resource = (String) message.obj;
+                Intent intent = new Intent(MainActivity.this, DisplayScoreActivity.class);
+                intent.putExtra("Raw Resource", raw_resource);
+                startActivity(intent);
+            }
+        };
+
         Thread get_score = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     login_action();
                     String str = inquiry_score_raw_resource(false);
+                    Message message = new Message();
+                    message.setTarget(handler);
+                    message.obj = str;
+                    message.sendToTarget();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

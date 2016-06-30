@@ -133,10 +133,6 @@ public class MainActivity extends AppCompatActivity {
         post_score_url_connection.setRequestProperty("Cookie", JsessionID);
         post_score_url_connection.connect();
 
-        System.out.println("Response Status : " + post_score_url_connection.getResponseCode());
-        if(post_score_url_connection.getResponseCode() != 200) {
-            return "";
-        }
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(post_score_url_connection.getInputStream(), "GBK"));
         String line;

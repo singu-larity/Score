@@ -1,5 +1,6 @@
 package com.example.john.score;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,14 +61,63 @@ public class DisplayScoreActivity extends AppCompatActivity {
     }
 
     public void calculate_score_point_avg(View view) {
-        double avg;
+        calculate_score_point_avg();
+        DialogFragment dialog = new ScorePointDialog();
+        dialog.show(getFragmentManager(), "score");
+    }
+
+    private void calculate_score_point_avg() {
         int sum_score = 0;
         double sum_credit = 0;
+
         for (int i = 1;i < parsed_data.size(); i++)
-            sum_score += Integer.parseInt(parsed_data.get(i).get(INDEX_OF_SCORE));
+            sum_score += Integer.parseInt(parsed_data.get(i).get(INDEX_OF_SCORE)) * Double.parseDouble(parsed_data.get(i).get(INDEX_OF_CREDIT));
         for (int i = 1;i < parsed_data.size(); i++)
             sum_credit += Double.parseDouble(parsed_data.get(i).get(INDEX_OF_CREDIT));
-        avg = sum_score / sum_credit;
+        avg_ABCDE = sum_score / sum_credit;
+
+        sum_score = 0; sum_credit = 0;
+        for (int i = 1;i < parsed_data.size(); i++)
+            if ("ABCD".contains(parsed_data.get(i).get(INDEX_OF_TYPE)))
+                sum_score += Integer.parseInt(parsed_data.get(i).get(INDEX_OF_SCORE)) * Double.parseDouble(parsed_data.get(i).get(INDEX_OF_CREDIT));
+        for (int i = 1;i < parsed_data.size(); i++)
+            if ("ABCD".contains(parsed_data.get(i).get(INDEX_OF_TYPE)))
+                sum_credit += Double.parseDouble(parsed_data.get(i).get(INDEX_OF_CREDIT));
+        avg_ABCD = sum_score / sum_credit;
+
+        sum_score = 0; sum_credit = 0;
+        for (int i = 1;i < parsed_data.size(); i++)
+            if ("ABC".contains(parsed_data.get(i).get(INDEX_OF_TYPE)))
+                sum_score += Integer.parseInt(parsed_data.get(i).get(INDEX_OF_SCORE)) * Double.parseDouble(parsed_data.get(i).get(INDEX_OF_CREDIT));
+        for (int i = 1;i < parsed_data.size(); i++)
+            if ("ABC".contains(parsed_data.get(i).get(INDEX_OF_TYPE)))
+                sum_credit += Double.parseDouble(parsed_data.get(i).get(INDEX_OF_CREDIT));
+        avg_ABC = sum_score / sum_credit;
+
+        sum_score = 0; sum_credit = 0;
+        for (int i = 1;i < parsed_data.size(); i++)
+            if ("BCD".contains(parsed_data.get(i).get(INDEX_OF_TYPE)))
+                sum_score += Integer.parseInt(parsed_data.get(i).get(INDEX_OF_SCORE)) * Double.parseDouble(parsed_data.get(i).get(INDEX_OF_CREDIT));
+        for (int i = 1;i < parsed_data.size(); i++)
+            if ("BCD".contains(parsed_data.get(i).get(INDEX_OF_TYPE)))
+                sum_credit += Double.parseDouble(parsed_data.get(i).get(INDEX_OF_CREDIT));
+        avg_BCD = sum_score / sum_credit;
+    }
+
+    static public double getAvg_BCD() {
+        return avg_BCD;
+    }
+
+    static public double getAvg_ABCD() {
+        return avg_ABCD;
+    }
+
+    public static double getAvg_ABCDE() {
+        return avg_ABCDE;
+    }
+
+    public static double getAvg_ABC() {
+        return avg_ABC;
     }
 
     public static final int INDEX_OF_NAME = 0;
@@ -77,4 +127,5 @@ public class DisplayScoreActivity extends AppCompatActivity {
     private static final int SKIP_ITEM_COUNT = 2;
     private static final int DISPLAY_ITEM_COUNT = 4;
     private ArrayList<ArrayList<String>> parsed_data;
+    private static double avg_ABC = 0, avg_ABCD = 0, avg_BCD = 0, avg_ABCDE = 0;
 }

@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         Thread thread_for_httpConnection = new Thread(new Runnable() {
             @Override
             public void run() {
-                Bitmap bitmap = build_init_connection();
                 ImageView imageView = (ImageView) findViewById(R.id.valid_code_image);
+                Bitmap bitmap = build_init_connection();
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageView.setImageBitmap(bitmap);
             }
@@ -46,6 +46,17 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        EditText editText = (EditText) findViewById(R.id.edit_user_password);
+        editText.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if(!hasFocus) {
+                    EditText editText = (EditText) findViewById(R.id.edit_user_password);
+                    generate_password(editText.getText().toString());
+                }
+            }
+        });
     }
 
     private Bitmap build_init_connection()
@@ -227,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
                 webView.loadUrl("javascript:encryption(\""+origin_password+"\")");
             }
         });

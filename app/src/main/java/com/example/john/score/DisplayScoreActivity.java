@@ -28,7 +28,7 @@ public class DisplayScoreActivity extends AppCompatActivity {
 
         ArrayList<String> initial = new ArrayList<>();
         initial.add("课程名称");
-        initial.add("课程类型");
+        initial.add("类型");
         initial.add("成绩");
         initial.add("学分");
         result.add(initial);
@@ -51,10 +51,9 @@ public class DisplayScoreActivity extends AppCompatActivity {
             end_index = single_raw_data.indexOf("</td>", begin_index) - ("\n" +
                     "          \t\t").length();
             System.out.println(single_raw_data.substring(begin_index, end_index));
-            if(count++ < SKIP_ITEM_COUNT);
-            else if ((count - SKIP_ITEM_COUNT) <= DISPLAY_ITEM_COUNT)
+            if (count++ >=  SKIP_ITEM_COUNT && (count - SKIP_ITEM_COUNT) <= DISPLAY_ITEM_COUNT)
                 result.add(single_raw_data.substring(begin_index, end_index));
-            else
+            if(count > SKIP_ITEM_COUNT + DISPLAY_ITEM_COUNT)
                 break;
         }
         return result;

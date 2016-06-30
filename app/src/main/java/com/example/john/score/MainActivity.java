@@ -6,9 +6,12 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -76,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        final String origin_password = ((EditText)findViewById(R.id.edit_user_password)).getText().toString();
+        generate_password(origin_password);
         Thread get_score = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -141,8 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
                 total_page = line.charAt(
                         "    <td width=\"16%\" align=\"center\" valign=\"middle\" bgcolor=\"#3366CC\" class=\"NavText style1\">共 ".length()) - '0';
-                current_page =
-                        line.charAt(
+                current_page = line.charAt(
                         "    <td width=\"16%\" align=\"center\" valign=\"middle\" bgcolor=\"#3366CC\" class=\"NavText style1\">共 x 页,第 ".length()) - '0';
                 System.out.println("Current Page : " + current_page);
                 System.out.println("Total Page : " + total_page);
@@ -167,8 +171,9 @@ public class MainActivity extends AppCompatActivity {
         req_param += "&";
 
         //User Password
-        editText = (EditText) findViewById(R.id.edit_user_password);
-        req_param = req_param.concat("userpwd_text=" + editText.getText().toString());
+        int i = 0;
+        System.out.println("Encrypted Password : " + RSA.crypt);
+        req_param = req_param.concat("userpwd_text=" + RSA.crypt);
         req_param += "&";
 
         //Validate Code
@@ -216,6 +221,18 @@ public class MainActivity extends AppCompatActivity {
             }
         return isLogin;
     }
+    public void encryption(final String origin_password) {
+        final WebView webView = (WebView) findViewById(R.id.web_view);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                webView.loadUrl("javascript:encryption(\""+origin_password+"\")");
+            }
+        });
+        webView.loadUrl("file:///android_asset/security.html");
+        webView.addJavascriptInterface(new RSA(), "CODE");
+    }
 
     public void refresh_img(View view) {
         Thread thread_for_httpConnection = new Thread(new Runnable() {
@@ -238,6 +255,11 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+    private void generate_password(String origin_password) {
+        encryption(origin_password);
+        System.out.println("Thread PID = " + Thread.currentThread().getId());
+        System.out.println("Encrypted Password = " + RSA.crypt);
     }
 
     private static final String BASIC_URL = "http://222.30.32.10";

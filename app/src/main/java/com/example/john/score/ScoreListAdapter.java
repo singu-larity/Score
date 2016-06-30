@@ -45,13 +45,13 @@ public class ScoreListAdapter extends BaseAdapter {
 
     private void set_text_for_textView(int i, View view) {
         ((TextView) view.findViewById(R.id.course_name))
-                .setText(m_data.get(i).get(0));
+                .setText(m_data.get(i).get(DisplayScoreActivity.INDEX_OF_NAME));
         ((TextView) view.findViewById(R.id.course_type))
-                .setText(m_data.get(i).get(1));
+                .setText(m_data.get(i).get(DisplayScoreActivity.INDEX_OF_TYPE));
         ((TextView) view.findViewById(R.id.course_credit))
-                .setText(m_data.get(i).get(2));
+                .setText(m_data.get(i).get(DisplayScoreActivity.INDEX_OF_CREDIT));
         ((TextView) view.findViewById(R.id.course_score))
-                .setText(m_data.get(i).get(3));
+                .setText(m_data.get(i).get(DisplayScoreActivity.INDEX_OF_SCORE));
     }
 
     private Context m_context;

@@ -5,4 +5,5 @@
     <string name="valid_code">验证码</string>
     <string name="login_button">登录</string>
     <string name="refresh_button">刷新</string>
+    <string name="calculate_score_point_avg">计算学分绩</string>
 </resources>

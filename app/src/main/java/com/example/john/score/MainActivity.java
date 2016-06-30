@@ -90,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        final String origin_password = ((EditText)findViewById(R.id.edit_user_password)).getText().toString();
-        generate_password(origin_password);
         Thread get_score = new Thread(new Runnable() {
             @Override
             public void run() {

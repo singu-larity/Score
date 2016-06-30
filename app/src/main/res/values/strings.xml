@@ -6,4 +6,5 @@
     <string name="login_button">登录</string>
     <string name="refresh_button">刷新</string>
     <string name="calculate_score_point_avg">计算学分绩</string>
+    <string name="valid_code_image">验证码图片</string>
 </resources>

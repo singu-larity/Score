@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -180,8 +179,6 @@ public class MainActivity extends AppCompatActivity {
         req_param += "&";
 
         //User Password
-        int i = 0;
-        System.out.println("Encrypted Password : " + RSA.crypt);
         req_param = req_param.concat("userpwd_text=" + RSA.crypt);
         req_param += "&";
 

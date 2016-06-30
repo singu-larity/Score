@@ -10,7 +10,7 @@
         android:textColor="#000000"
         android:id="@+id/course_name"/>
     <View
-        android:layout_width="0.5px"
+        android:layout_width="0.1px"
         android:layout_height="match_parent"
         android:background="#B8B8B8"
         android:visibility="visible" />
@@ -22,6 +22,11 @@
         android:textSize="20sp"
         android:textColor="#000000"
         android:id="@+id/course_type"/>
+    <View
+        android:layout_width="0.1px"
+        android:layout_height="match_parent"
+        android:background="#B8B8B8"
+        android:visibility="visible" />
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -30,6 +35,11 @@
         android:textSize="20sp"
         android:textColor="#000000"
         android:id="@+id/course_credit"/>
+    <View
+        android:layout_width="0.1px"
+        android:layout_height="match_parent"
+        android:background="#B8B8B8"
+        android:visibility="visible" />
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"

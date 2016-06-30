@@ -25,6 +25,8 @@ public class ScoreListAdapter extends BaseAdapter {
         else {
             set_text_for_textView(i, view);
         }
+        if(i % 2 == 0)
+            view.setBackgroundColor(0x1F003EFF);
         return view;
     }
 
